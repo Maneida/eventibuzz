@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Inline Font Size Example</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}"/>
+</head>
+
+<body>
+  <header>
+    <div id="header_logo">
+      <a href="https://cozyfashionables.com">
+        <img src="{{ url_for('static', filename='images/sitelogo.svg') }}">
+      </a>
+    </div>
+    
+  </header>
+
+  <p style="font-size: 60px;">Welcome to the index of the <span style="color: green;">MATRIX</span>.</p>
+
+</body>
+
+</html>
