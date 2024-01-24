@@ -16,7 +16,7 @@ export FLASK_APP=app.app:create_app
 flask run -p 5000 &
 app_pid=$!
 
-sleep2
+sleep 2
 
 # Run the Flask API in the background
 export FLASK_APP=api.v1.api:create_api
