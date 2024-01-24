@@ -2,9 +2,7 @@
 """
 Holds Event class
 """
-# import models
 from app.models.base_model import BaseModel, Base
-# import sqlalchemy
 from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 

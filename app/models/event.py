@@ -2,10 +2,8 @@
 """
 Holds Event class
 """
-# import models
 from app.models.base_model import BaseModel, Base
 from app.models.notification import Notification
-# import sqlalchemy
 from sqlalchemy import Column, String, Text, Table, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -59,12 +57,16 @@ class Event(BaseModel, Base):
         """initializes Event"""
         super().__init__(*args, **kwargs)
 
+
+    # #####################################################################
+
+
     def create_created_notification(self):
         """
         Method for creating a notification when a new user is created.
         """
         notification_data = {
-            "message": f"Event'{self.title}' created"
+            "message": f"New Event '{self.title}' created."
         }
         # if user is the author use the above else
         # if subscribed, or for i in self.user.observers, do bthe below
@@ -72,7 +74,7 @@ class Event(BaseModel, Base):
         # "message": f"Event'{self.title}'
         # created by '{self.user.get("username")}'"
 
-        notification = Notification(**notification_data)
+        notification = Notification(event_id=self.id, **notification_data)
         notification.save()
 
     def create_deleted_notification(self):
@@ -80,10 +82,10 @@ class Event(BaseModel, Base):
         Method for creating a notification when a user is deleted.
         """
         notification_data = {
-            "message": f"User account, '{self.email}' has been deleted"
+            "message": f"Event '{self.title}' has been deleted"
         }
 
-        notification = Notification(**notification_data)
+        notification = Notification(event_id=self.id, **notification_data)
         notification.save()
 
     def create_updated_notification(self):
@@ -91,8 +93,8 @@ class Event(BaseModel, Base):
         Method for creating a notification when a user is updated.
         """
         notification_data = {
-            "message": f"User {self.email} details updated"
+            "message": f"Event '{self.title}' details updated"
         }
 
-        notification = Notification(**notification_data)
+        notification = Notification(event_id=self.id, **notification_data)
         notification.save()

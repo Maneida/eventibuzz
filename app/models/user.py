@@ -3,10 +3,8 @@
 Holds class User
 """
 
-# import models
 from app.models.base_model import BaseModel, Base
 from app.models.notification import Notification
-# import sqlalchemy
 from sqlalchemy import Column, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -64,7 +62,7 @@ class User(BaseModel, Base):
             "message": f"New user account created for '{self.email}'"
         }
 
-        notification = Notification(**notification_data)
+        notification = Notification(user_id=self.id, **notification_data)
         notification.save()
 
     def create_deleted_notification(self):
@@ -75,7 +73,7 @@ class User(BaseModel, Base):
             "message": f"User account, '{self.email}' has been deleted"
         }
 
-        notification = Notification(**notification_data)
+        notification = Notification(user_id=self.id, **notification_data)
         notification.save()
 
     def create_updated_notification(self):
@@ -86,5 +84,5 @@ class User(BaseModel, Base):
             "message": f"User {self.email} details updated"
         }
 
-        notification = Notification(**notification_data)
+        notification = Notification(user_id=self.id, **notification_data)
         notification.save()

@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 """Base Model for the Eventibuzz webserver"""
 from datetime import datetime
-from sqlalchemy import create_engine, Column, String, DateTime
+from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import declarative_base
-from time import sleep
 import uuid
 import app.models
 

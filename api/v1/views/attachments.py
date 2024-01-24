@@ -6,10 +6,10 @@ from app.models import storage, CNC
 @app_views.route('events/<event_id>/attachments', methods=['POST'])
 def attachment_no_id(event_id=None):
     """
-        attachment route that handles http requests with no ID given
+        create Attachment instance for a specific event_id
     """
 
-    # Create new event
+    # Create new event attachment
     if request.method == 'POST':
         req_json = request.get_json()
         if req_json is None:
@@ -17,16 +17,15 @@ def attachment_no_id(event_id=None):
         if req_json.get('event_id') is None:
             abort(400, 'Missing event_id')
         Attachment = CNC.get('Attachment')
-        new_object = Attachment(**req_json)
+        new_object = Attachment(event_id=event_id, **req_json)
         new_object.save()
         return jsonify(new_object.to_dict()), 201
 
 
 @app_views.route('/attachments/<attachment_id>', methods=['GET', 'DELETE', 'PUT'])
-def attachment_with_id(attach_id):
+def attachment_with_id(attachment_id):
     """ attachment route that handles http requests with ID given """
-    attach_obj = storage.get(
-        'Attachment', attach_id)  # Modify from this point on
+    attach_obj = storage.get('Attachment', attachment_id)
     if attach_obj is None:
         abort(404, 'Not found')
 
