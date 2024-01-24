@@ -8,12 +8,12 @@ from sqlalchemy import Column, String, Text, Table, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-'''user_event_association = Table('user_event_association', Base.metadata,
+user_event_association = Table('user_event_association', Base.metadata,
                                Column('user_id', String(60),
                                       ForeignKey('users.id')),
                                Column('role_id', String(60),
                                       ForeignKey('roles.id'))
-                               )'''
+                               )
 
 
 class Event(BaseModel, Base):
@@ -50,8 +50,9 @@ class Event(BaseModel, Base):
         lazy='joined', cascade='delete')
 
     # Users tracking event future
-    '''observers = relationship(
-        'User', secondary=user_event_association, back_populates='tracked_events')'''
+    observers = relationship(
+        'User', secondary=user_event_association,
+        back_populates='tracked_events')
 
     def __init__(self, *args, **kwargs):
         """initializes Event"""

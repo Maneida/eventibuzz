@@ -9,10 +9,10 @@ from sqlalchemy import Column, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-'''user_event_association = Table('user_role_association', Base.metadata,
+user_event_association = Table('user_role_association', Base.metadata,
     Column('user_id', String(60),ForeignKey('users.id')),
     Column('role_id', String(60),ForeignKey('roles.id'))
-)'''
+)
 
 class User(BaseModel, Base):
     """Representation of a user """
@@ -30,8 +30,8 @@ class User(BaseModel, Base):
                                  lazy='joined', cascade='delete')
 
     # Events being tracked by user
-    '''tracked_events = relationship(
-        'Event', secondary=user_event_association, back_populates='observers')'''
+    tracked_events = relationship(
+        'Event', secondary=user_event_association, back_populates='observers')
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
