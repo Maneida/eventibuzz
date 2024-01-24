@@ -44,9 +44,6 @@ eggs/
 wheel/
 *.egg-info/
 
-# macOS
-.DS_Store
-
 # Node.js
 node_modules/
 
@@ -56,10 +53,6 @@ node_modules/
 *.swo
 *.sublime-workspace
 *.sublime-project
-
-# OS generated files
-ehthumbs.db
-Thumbs.db
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
@@ -71,12 +64,6 @@ Thumbs.db
 lib/
 lib64/
 
-# Virtual environments
-# .env/
-# env/
-# venv/
-# ENV/
-
 # pyenv
 .python-version
 
@@ -87,29 +74,10 @@ Pipfile.lock
 # celery beat schedule file
 celerybeat-schedule
 
-# SageMath parsed files
-.sage.py
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
 # mypy
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# Pyre type checker
-.pyre/
-
-# Jupyter lab workspace
-.jupyter/
 
 # Python workspace (should include env, build, dist, etc.)
 .python-worspace/

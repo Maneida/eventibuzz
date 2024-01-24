@@ -58,7 +58,7 @@ def user_with_id(user_id=None):
         return jsonify(user_obj.to_dict()), 200
 
 
-@app_views.route('/users/<user_id>/events', methods=['GET'], strict_slashes=False)
+@app_views.route('/users/<user_id>/events', methods=['GET', 'POST'], )
 def get_user_events(user_id):
     """
     Get and create events for a specific user identified by user_id
@@ -75,8 +75,20 @@ def get_user_events(user_id):
 
         return jsonify(user_events)
 
+    if request.method == 'POST':
+        # Create new event
+        req_json = request.get_json()
+        if req_json is None:
+            abort(400, 'Not a JSON')
+        if req_json.get('user_id') is None:
+            abort(400, 'Missing user_id')
+        Event = CNC.get('Event')
+        new_object = Event(**req_json)
+        new_object.save()
+        return jsonify(new_object.to_dict()), 201
 
-@app_views.route('/users/<user_id>/notifications', methods=['GET'], strict_slashes=False)
+
+@app_views.route('/users/<user_id>/notifications', methods=['GET', 'POST'])
 def get_user_notifications(user_id):
     """
     Get and create events for a specific user identified by user_id
@@ -92,6 +104,18 @@ def get_user_notifications(user_id):
                        if notif.user_id == user_id]
 
         return jsonify(user_notif)
+
+    if request.method == 'POST':
+        # Create new notification
+        req_json = request.get_json()
+        if req_json is None:
+            abort(400, 'Not a JSON')
+        if req_json.get('user_id') is None:
+            abort(400, 'Missing user_id')
+        Notification = CNC.get('Notification')
+        new_object = Notification(**req_json)
+        new_object.save()
+        return jsonify(new_object.to_dict()), 201
 
 
 # the /users route should only be an internally used

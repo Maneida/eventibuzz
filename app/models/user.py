@@ -5,10 +5,16 @@ Holds class User
 
 # import models
 from app.models.base_model import BaseModel, Base
+from app.models.notification import Notification
 # import sqlalchemy
-from sqlalchemy import Column, String
+from sqlalchemy import Column, String, Table, ForeignKey
 from sqlalchemy.orm import relationship
 
+
+'''user_event_association = Table('user_role_association', Base.metadata,
+    Column('user_id', String(60),ForeignKey('users.id')),
+    Column('role_id', String(60),ForeignKey('roles.id'))
+)'''
 
 class User(BaseModel, Base):
     """Representation of a user """
@@ -24,6 +30,10 @@ class User(BaseModel, Base):
                           lazy='joined', cascade='delete')
     _notifications = relationship('Notification', back_populates='user',
                                  lazy='joined', cascade='delete')
+
+    # Events being tracked by user
+    '''tracked_events = relationship(
+        'Event', secondary=user_event_association, back_populates='observers')'''
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
@@ -43,3 +53,38 @@ class User(BaseModel, Base):
         user_dict['events'] = self.events
         user_dict['notifications'] = self.notifications
         return user_dict
+
+    # #####################################################################
+    
+    def create_created_notification(self):
+        """
+        Method for creating a notification when a new user is created.
+        """
+        notification_data = {
+            "message": f"New user account created for '{self.email}'"
+        }
+
+        notification = Notification(**notification_data)
+        notification.save()
+
+    def create_deleted_notification(self):
+        """
+        Method for creating a notification when a user is deleted.
+        """
+        notification_data = {
+            "message": f"User account, '{self.email}' has been deleted"
+        }
+
+        notification = Notification(**notification_data)
+        notification.save()
+
+    def create_updated_notification(self):
+        """
+        Method for creating a notification when a user is updated.
+        """
+        notification_data = {
+            "message": f"User {self.email} details updated"
+        }
+
+        notification = Notification(**notification_data)
+        notification.save()

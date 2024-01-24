@@ -3,30 +3,17 @@ from flask import abort, jsonify, request
 from app.models import storage, CNC
 
 
-@app_views.route('/events', methods=['GET', 'POST'])
+@app_views.route('/events', methods=['GET'])
 def events_no_id(user_id=None):
     """
         users route that handles http requests with no ID given
     """
     # Get all events
-    if request.method == 'GET':
-        all_users = storage.all('Event')
+    all_events = storage.all('Event')
 
-        all_users = [obj.to_dict() for obj in all_users.values()]
+    all_events = [obj.to_dict() for obj in all_events.values()]
 
-        return jsonify(all_users)
-
-    # Create new event
-    if request.method == 'POST':
-        req_json = request.get_json()
-        if req_json is None:
-            abort(400, 'Not a JSON')
-        if req_json.get('user_id') is None:
-            abort(400, 'Missing user id')
-        Event = CNC.get('Event')
-        new_object = Event(**req_json)
-        new_object.save()
-        return jsonify(new_object.to_dict()), 201
+    return jsonify(all_events)
 
 
 @app_views.route('/events/<event_id>', methods=['GET', 'DELETE', 'PUT'])

@@ -4,9 +4,18 @@ Holds Event class
 """
 # import models
 from app.models.base_model import BaseModel, Base
+from app.models.notification import Notification
 # import sqlalchemy
-from sqlalchemy import Column, String, Text, DateTime, Float, ForeignKey
+from sqlalchemy import Column, String, Text, Table, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
+
+
+'''user_event_association = Table('user_event_association', Base.metadata,
+                               Column('user_id', String(60),
+                                      ForeignKey('users.id')),
+                               Column('role_id', String(60),
+                                      ForeignKey('roles.id'))
+                               )'''
 
 
 class Event(BaseModel, Base):
@@ -34,7 +43,7 @@ class Event(BaseModel, Base):
     # updated_by = Column(String(255))
 
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
-    
+
     user = relationship('User', back_populates='_events')
     attachments = relationship('Attachment', back_populates='event',
                                lazy='joined', cascade='delete')
@@ -42,8 +51,48 @@ class Event(BaseModel, Base):
         'Notification', back_populates='event',
         lazy='joined', cascade='delete')
 
+    # Users tracking event future
+    '''observers = relationship(
+        'User', secondary=user_event_association, back_populates='tracked_events')'''
+
     def __init__(self, *args, **kwargs):
         """initializes Event"""
         super().__init__(*args, **kwargs)
 
-        
+    def create_created_notification(self):
+        """
+        Method for creating a notification when a new user is created.
+        """
+        notification_data = {
+            "message": f"Event'{self.title}' created"
+        }
+        # if user is the author use the above else
+        # if subscribed, or for i in self.user.observers, do bthe below
+        # notif_obj = storage.get('Notification', notif_id)
+        # "message": f"Event'{self.title}'
+        # created by '{self.user.get("username")}'"
+
+        notification = Notification(**notification_data)
+        notification.save()
+
+    def create_deleted_notification(self):
+        """
+        Method for creating a notification when a user is deleted.
+        """
+        notification_data = {
+            "message": f"User account, '{self.email}' has been deleted"
+        }
+
+        notification = Notification(**notification_data)
+        notification.save()
+
+    def create_updated_notification(self):
+        """
+        Method for creating a notification when a user is updated.
+        """
+        notification_data = {
+            "message": f"User {self.email} details updated"
+        }
+
+        notification = Notification(**notification_data)
+        notification.save()
