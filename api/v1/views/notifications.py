@@ -49,7 +49,7 @@ def create_event_notification(event_id=None):
 
 
 @app_views.route('/notifications/<notification_id>', methods=['GET', 'DELETE'])
-def event_with_id(notification_id):
+def notification_with_id(notification_id):
     """ users route that handles http requests with ID given """
     notif_obj = storage.get('Notification', notification_id)
     if notif_obj is None:
