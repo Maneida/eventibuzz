@@ -11,7 +11,7 @@ from sqlalchemy.orm import relationship
 
 user_event_association = Table('user_role_association', Base.metadata,
     Column('user_id', String(60),ForeignKey('users.id')),
-    Column('role_id', String(60),ForeignKey('roles.id'))
+    Column('event_id', String(60),ForeignKey('events.id'))
 )
 
 class User(BaseModel, Base):
