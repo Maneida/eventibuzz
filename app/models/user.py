@@ -10,9 +10,12 @@ from sqlalchemy.orm import relationship
 
 
 user_event_association = Table('user_role_association', Base.metadata,
-    Column('user_id', String(60),ForeignKey('users.id')),
-    Column('event_id', String(60),ForeignKey('events.id'))
-)
+                               Column('user_id', String(60),
+                                      ForeignKey('users.id')),
+                               Column('event_id', String(60),
+                                      ForeignKey('events.id'))
+                               )
+
 
 class User(BaseModel, Base):
     """Representation of a user """
@@ -22,12 +25,11 @@ class User(BaseModel, Base):
     last_name = Column(String(128), nullable=True)
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
-    
 
     _events = relationship('Event', back_populates="user",
-                          lazy='joined', cascade='delete')
+                           lazy='joined', cascade='delete')
     _notifications = relationship('Notification', back_populates='user',
-                                 lazy='joined', cascade='delete')
+                                  lazy='joined', cascade='delete')
 
     # Events being tracked by user
     tracked_events = relationship(
@@ -53,7 +55,7 @@ class User(BaseModel, Base):
         return user_dict
 
     # #####################################################################
-    
+
     def create_created_notification(self):
         """
         Method for creating a notification when a new user is created.

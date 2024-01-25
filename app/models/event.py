@@ -58,9 +58,7 @@ class Event(BaseModel, Base):
         """initializes Event"""
         super().__init__(*args, **kwargs)
 
-
     # #####################################################################
-
 
     def create_created_notification(self):
         """

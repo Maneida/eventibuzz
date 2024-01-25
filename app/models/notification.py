@@ -17,8 +17,8 @@ class Notification(BaseModel, Base):
     user_id = Column(String(60), ForeignKey('users.id'), nullable=True)
     event_id = Column(String(60), ForeignKey('events.id'), nullable=True)
 
-    # is_read = Column(Boolean, , nullable=False, default=False) 
-    
+    # is_read = Column(Boolean, , nullable=False, default=False)
+
     user = relationship('User', back_populates='_notifications')
     event = relationship('Event', back_populates='notifications')
 
