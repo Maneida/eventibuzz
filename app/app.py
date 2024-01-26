@@ -11,6 +11,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'eventibuzz.sqlite'),
     )
+    # app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
     '''# Database initialization
     with app.app_context():
@@ -54,14 +55,14 @@ def create_app(test_config=None):
     return app
 
 
-def initialize_database(app):
+'''def initialize_database(app):
     with app.app_context():
-        storage.reload()
+        storage.reload()'''
 
 
 
 if __name__ == '__main__':
     app = create_app()
     # app.run(host='0.0.0.0', port=5000)
-    initialize_database(app)
+    # initialize_database(app)
     app.run()

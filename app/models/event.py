@@ -42,21 +42,45 @@ class Event(BaseModel, Base):
 
     user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
 
-    user = relationship('User', back_populates='_events')
-    attachments = relationship('Attachment', back_populates='event',
+    _user = relationship('User', back_populates='_events')
+    _attachments = relationship('Attachment', back_populates='_event',
                                lazy='joined', cascade='delete')
-    notifications = relationship(
-        'Notification', back_populates='event',
+    _notifications = relationship(
+        'Notification', back_populates='_event',
         lazy='joined', cascade='delete')
 
     # Users tracking event future
-    observers = relationship(
+    _observers = relationship(
         'User', secondary=user_event_association,
-        back_populates='tracked_events')
+        back_populates='_tracked_events')
 
     def __init__(self, *args, **kwargs):
         """initializes Event"""
         super().__init__(*args, **kwargs)
+
+    @property
+    def user(self):
+        return [user.to_dict() for user in self._user]
+
+    @property
+    def attachments(self):
+        return [event.to_dict() for event in self._attachments]
+
+    @property
+    def notifications(self):
+        return [notification.to_dict() for notification in self._notifications]
+
+    @property
+    def observers(self):
+        return [observer.to_dict() for observer in self._observers]
+
+    def to_dict(self):
+        """Converts the User object to a dictionary"""
+        user_dict = super().to_dict()
+        user_dict['attachments'] = self.attachments
+        user_dict['notifications'] = self.notifications
+        user_dict['observers'] = self.observers
+        return user_dict
 
     # #####################################################################
 
@@ -73,7 +97,7 @@ class Event(BaseModel, Base):
         # "message": f"Event'{self.title}'
         # created by '{self.user.get("username")}'"
 
-        notification = Notification(event_id=self.id, **notification_data)
+        notification = Notification(event_id=self.id, user_id=self.user_id, **notification_data)
         notification.save()
 
     def create_deleted_notification(self):
@@ -84,7 +108,8 @@ class Event(BaseModel, Base):
             "message": f"Event '{self.title}' has been deleted"
         }
 
-        notification = Notification(event_id=self.id, **notification_data)
+        notification = Notification(
+            event_id=self.id, user_id=self.user_id, **notification_data)
         notification.save()
 
     def create_updated_notification(self):
@@ -95,5 +120,5 @@ class Event(BaseModel, Base):
             "message": f"Event '{self.title}' details updated"
         }
 
-        notification = Notification(event_id=self.id, **notification_data)
+        notification = Notification(event_id=self.id, user_id=self.user_id, **notification_data)
         notification.save()

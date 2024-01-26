@@ -15,8 +15,12 @@ class Attachment(BaseModel, Base):
     file_path = Column(String(255), nullable=False)
     description = Column(String(255), nullable=True)
 
-    event = relationship('Event', back_populates='attachments')
+    _event = relationship('Event', back_populates='_attachments')
 
     def __init__(self, *args, **kwargs):
         """initializes attachment"""
         super().__init__(*args, **kwargs)
+
+    @property
+    def event(self):
+        return [event.to_dict() for event in self._event]

@@ -20,7 +20,7 @@ def create_user_notification(user_id=None):
         if req_json.get('user_id') is None:
             abort(400, 'Missing user_id')
         Notification = CNC.get('Notification')
-        new_object = Notification(user_id=user_id, **req_json)
+        new_object = Notification(**req_json)
         new_object.save()
         return jsonify(new_object.to_dict()), 201
 
@@ -40,10 +40,12 @@ def create_event_notification(event_id=None):
         req_json = request.get_json()
         if req_json is None:
             abort(400, 'Not a JSON')
+        if req_json.get('user_id') is None:
+            abort(400, 'Missing user_id')
         if req_json.get('event_id') is None:
             abort(400, 'Missing event_id')
         Notification = CNC.get('Notification')
-        new_object = Notification(event_id=event_id, **req_json)
+        new_object = Notification(**req_json)
         new_object.save()
         return jsonify(new_object.to_dict()), 201
 

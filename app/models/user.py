@@ -26,14 +26,14 @@ class User(BaseModel, Base):
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
 
-    _events = relationship('Event', back_populates="user",
+    _events = relationship('Event', back_populates="_user",
                            lazy='joined', cascade='delete')
-    _notifications = relationship('Notification', back_populates='user',
+    _notifications = relationship('Notification', back_populates='_user',
                                   lazy='joined', cascade='delete')
 
     # Events being tracked by user
-    tracked_events = relationship(
-        'Event', secondary=user_event_association, back_populates='observers')
+    _tracked_events = relationship(
+        'Event', secondary=user_event_association, back_populates='_observers')
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
@@ -47,11 +47,16 @@ class User(BaseModel, Base):
     def notifications(self):
         return [notification.to_dict() for notification in self._notifications]
 
+    @property
+    def tracked_events(self):
+        return [tracked_event.to_dict() for tracked_event in self._tracked_events]
+
     def to_dict(self):
         """Converts the User object to a dictionary"""
         user_dict = super().to_dict()
         user_dict['events'] = self.events
         user_dict['notifications'] = self.notifications
+        user_dict['tracked_events'] = self.tracked_events
         return user_dict
 
     # #####################################################################

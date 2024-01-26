@@ -13,6 +13,7 @@ trap stop_services EXIT INT TERM
 
 # Run the Flask app in the background
 export FLASK_APP=app.app:create_app
+export FLASK_DEBUG=1 # make app run in debug mode
 flask run -p 5000 &
 app_pid=$!
 
@@ -20,6 +21,7 @@ sleep 2
 
 # Run the Flask API in the background
 export FLASK_APP=api.v1.api:create_api
+export FLASK_DEBUG=1 # make app run in debug mode
 flask run -p 5001 &
 api_pid=$!
 

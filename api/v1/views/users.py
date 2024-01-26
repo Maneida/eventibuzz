@@ -13,11 +13,13 @@ def users_no_id(user_id=None):
         all_users = storage.all('User')
 
         all_users = [obj.to_dict() for obj in all_users.values()]
-        '''all_users = [
-            {key: value for key, value in user.items() if key not in [
-                "events", "notifications", "password"]}
+
+        exclude_keys = ["events", "notifications",
+                        "tracked_events", "password"]
+        all_users = [
+            {k: v for k, v in user.items() if k not in exclude_keys}
             for user in all_users
-        ]'''
+        ]
 
         return jsonify(all_users)
 
@@ -32,7 +34,10 @@ def users_no_id(user_id=None):
         User = CNC.get('User')
         new_object = User(**req_json)
         new_object.save()
-        # new_object.create_created_notification()
+
+        # create notification
+        new_object.create_created_notification()
+        
         return jsonify(new_object.to_dict()), 201
 
 
@@ -44,11 +49,20 @@ def user_with_id(user_id=None):
         abort(404, 'Not found')
 
     if request.method == 'GET':
-        return jsonify(user_obj.to_dict())
+        user_dict = user_obj.to_dict()
+
+        exclude_keys = ["events", "notifications",
+                        "tracked_events", "password"]
+        user_dict = {k: v for k, v in user_dict.items() if k not in exclude_keys}
+        
+        return jsonify(user_dict)
 
     if request.method == 'DELETE':
         user_obj.delete()
-        # user_obj.create_deleted_notification()
+
+        # create notification
+        user_obj.create_deleted_notification()
+        
         del user_obj
         return jsonify({}), 200
 
@@ -57,7 +71,10 @@ def user_with_id(user_id=None):
         if req_json is None:
             abort(400, 'Not a JSON')
         user_obj.bm_update(req_json)
-        # user_obj.create_modified_notification()
+
+        # create notification
+        user_obj.create_modified_notification()
+        
         return jsonify(user_obj.to_dict()), 200
 
 
@@ -75,6 +92,12 @@ def get_user_events(user_id):
         all_events = storage.all('Event')
         user_events = [event.to_dict() for event in all_events.values()
                        if event.user_id == user_id]
+
+        exclude_keys = ["attachments", "notifications"]
+        user_events = [
+            {k: v for k, v in event.items() if k not in exclude_keys}
+            for event in user_events
+        ]
 
         return jsonify(user_events)
 

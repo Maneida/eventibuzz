@@ -31,7 +31,7 @@ class DBStorage:
         """
             creates the engine self.__engine
         """
-        self.__engine = create_engine('sqlite:///mydb.db')
+        self.__engine = create_engine('sqlite:///mytestdb.db')
         '''self.__engine = create_engine(
             'mysql+mysqldb://{}:{}@{}/{}'.format(
                 os.environ.get('EBUZZ_MYSQL_USER'),

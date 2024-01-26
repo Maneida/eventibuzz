@@ -1,6 +1,7 @@
+from datetime import datetime
 from api.v1.views import app_views
 from flask import abort, jsonify, request
-from app.models import storage, CNC
+from app.models import storage, CNC, base_model
 
 
 @app_views.route('/events', methods=['GET'])
@@ -11,6 +12,12 @@ def events_no_id(user_id=None):
     # Get all events
     all_events = storage.all('Event')
     all_events = [obj.to_dict() for obj in all_events.values()]
+
+    exclude_keys = ["attachments", "notifications", "observers"]
+    all_events = [
+            {k: v for k, v in event.items() if k not in exclude_keys}
+            for event in all_events
+        ]
 
     return jsonify(all_events)
 
@@ -24,12 +31,20 @@ def event_with_id(event_id):
 
     # Get specific Event
     if request.method == 'GET':
-        return jsonify(event_obj.to_dict())
+        event_dict = event_obj.to_dict()
+
+        exclude_keys = ["attachments", "notifications", "observers"]
+        event_dict = {k: v for k, v in event_dict.items()
+                     if k not in exclude_keys}
+        return jsonify(event_dict)
 
     # Delete specific Event
     if request.method == 'DELETE':
         event_obj.delete()
-        # event.create_deleted_notification()
+
+        # create notification
+        event_obj.create_deleted_notification()
+        
         del user_obj
         return jsonify({}), 200
 
@@ -39,7 +54,10 @@ def event_with_id(event_id):
         if req_json is None:
             abort(400, 'Not a JSON')
         event_obj.bm_update(req_json)
-        # event_obj.create_modified_notification()
+
+        # create notification
+        event_obj.create_modified_notification()
+        
         return jsonify(event_obj.to_dict()), 200
 
 
@@ -58,12 +76,25 @@ def create_user_event(user_id=None):
         req_json = request.get_json()
         if req_json is None:
             abort(400, 'Not a JSON')
+
+        start_datetime_str = req_json.get('start_datetime')
+        end_datetime_str = req_json.get('end_datetime')
+
+        if start_datetime_str and end_datetime_str:
+            req_json['start_datetime'] = datetime.strptime(
+                start_datetime_str, base_model.time)
+            req_json['end_datetime'] = datetime.strptime(
+                end_datetime_str, base_model.time)
+            
         if req_json.get('user_id') is None:
             abort(400, 'Missing user_id')
         Event = CNC.get('Event')
-        new_object = Event(user_id=user_id, **req_json)
+        new_object = Event(**req_json)
         new_object.save()
-        # new_object.create_created_notification()
+
+        # create notification
+        new_object.create_created_notification()
+        
         return jsonify(new_object.to_dict()), 201
 
 

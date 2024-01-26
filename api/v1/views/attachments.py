@@ -3,11 +3,29 @@ from flask import abort, jsonify, request
 from app.models import storage, CNC
 
 
-@app_views.route('events/<event_id>/attachments', methods=['POST'])
+@app_views.route('events/<event_id>/attachments', methods=['GET', 'POST'])
 def attachment_no_id(event_id=None):
     """
-        create Attachment instance for a specific event_id
+        get and create attachments instance for a specific event_id
     """
+
+    event = storage.get('Event', event_id)
+
+    if event is None:
+        abort(404, 'Event not found')
+
+    if request.method == 'GET':
+        all_attachs = storage.all('Attachment')
+        event_attachs = [attach.to_dict() for attach in all_attachs.values()
+                         if attach.event_id == event_id]
+
+        exclude_keys = ["attachments", "notifications"]
+        event_attachs = [
+            {k: v for k, v in event.items() if k not in exclude_keys}
+            for event in event_attachs
+        ]
+
+        return jsonify(event_attachs)
 
     # Create new event attachment
     if request.method == 'POST':
@@ -17,12 +35,13 @@ def attachment_no_id(event_id=None):
         if req_json.get('event_id') is None:
             abort(400, 'Missing event_id')
         Attachment = CNC.get('Attachment')
-        new_object = Attachment(event_id=event_id, **req_json)
+        new_object = Attachment(**req_json)
         new_object.save()
         return jsonify(new_object.to_dict()), 201
 
 
-@app_views.route('/attachments/<attachment_id>', methods=['GET', 'DELETE', 'PUT'])
+@app_views.route('/attachments/<attachment_id>',
+                 methods=['GET', 'DELETE', 'PUT'])
 def attachment_with_id(attachment_id):
     """ attachment route that handles http requests with ID given """
     attach_obj = storage.get('Attachment', attachment_id)
