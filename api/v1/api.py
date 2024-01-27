@@ -7,8 +7,6 @@ from app.models import storage
 
 def create_api():
     api = Flask(__name__)
-
-    # api.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
     
     api.url_map.strict_slashes = False
     api.register_blueprint(app_views)

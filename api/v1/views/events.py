@@ -86,8 +86,7 @@ def create_user_event(user_id=None):
             req_json['end_datetime'] = datetime.strptime(
                 end_datetime_str, base_model.time)
             
-        if req_json.get('user_id') is None:
-            abort(400, 'Missing user_id')
+        req_json['user_id'] = user_id
         Event = CNC.get('Event')
         new_object = Event(**req_json)
         new_object.save()

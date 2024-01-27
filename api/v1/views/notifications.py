@@ -44,6 +44,7 @@ def create_event_notification(event_id=None):
             abort(400, 'Missing user_id')
         if req_json.get('event_id') is None:
             abort(400, 'Missing event_id')
+        req_json['event_id'] = event_id
         Notification = CNC.get('Notification')
         new_object = Notification(**req_json)
         new_object.save()

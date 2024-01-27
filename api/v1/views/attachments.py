@@ -32,8 +32,10 @@ def attachment_no_id(event_id=None):
         req_json = request.get_json()
         if req_json is None:
             abort(400, 'Not a JSON')
-        if req_json.get('event_id') is None:
-            abort(400, 'Missing event_id')
+        if req_json.get('file_path') is None:
+            abort(400, 'Missing file_path')
+
+        req_json['event_id'] = event_id
         Attachment = CNC.get('Attachment')
         new_object = Attachment(**req_json)
         new_object.save()

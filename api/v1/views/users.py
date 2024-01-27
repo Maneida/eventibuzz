@@ -14,6 +14,11 @@ def users_no_id(user_id=None):
 
         all_users = [obj.to_dict() for obj in all_users.values()]
 
+        include_keys = ['events', 'notifications', 'tracked_events']
+        for user_dict in all_users:
+            for key in include_keys:
+                user_dict[f'has_{key}'] = len(user_dict.get(key, [])) > 0
+
         exclude_keys = ["events", "notifications",
                         "tracked_events", "password"]
         all_users = [
@@ -50,6 +55,17 @@ def user_with_id(user_id=None):
 
     if request.method == 'GET':
         user_dict = user_obj.to_dict()
+
+        '''if len(user_dict.get('events')) > 0:
+            user_dict['has_events'] = True
+        if len(user_dict.get('notifications')) > 0:
+            user_dict['has_notifications'] = True
+        if len(user_dict.get('tracked_events')) > 0:
+            user_dict['has_tracked_events'] = True'''
+
+        include_keys = ['events', 'notifications', 'tracked_events']
+        for key in include_keys:
+            user_dict[f'has_{key}'] = len(user_dict.get(key, [])) > 0  
 
         exclude_keys = ["events", "notifications",
                         "tracked_events", "password"]
@@ -93,7 +109,7 @@ def get_user_events(user_id):
         user_events = [event.to_dict() for event in all_events.values()
                        if event.user_id == user_id]
 
-        exclude_keys = ["attachments", "notifications"]
+        exclude_keys = ["attachments", "notifications", "observers"]
         user_events = [
             {k: v for k, v in event.items() if k not in exclude_keys}
             for event in user_events
